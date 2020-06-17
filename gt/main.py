@@ -5,11 +5,14 @@ import time
 import datetime
 import cv2
 import numpy as np
+import pyautogui
 
 from gaze_tracker import GazeTracker
 from calibration import calibrate
 from screen import Screen
 
+RES_SCREEN = pyautogui.size() # RES_SCREEN[0] -> width
+                              # RES_SCREEN[1] -> heigth
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
@@ -57,7 +60,7 @@ def main():
         gaze = gaze_tracker.get_gaze()
         
         print("GAZE: {}".format(gaze))
-        print("DIRECTION: {}".format(gaze_tracker.get_direction()))
+        print("DIRECTION: {}".format(gaze_tracker.get_looking_direction()))
         if gaze:
             screen.update(gaze)
             screen.refresh()

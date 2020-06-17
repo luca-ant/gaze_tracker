@@ -21,6 +21,26 @@ class EyeTracker():
 #        self.eye_cascade = cv2.CascadeClassifier(os.path.join('classifiers', 'haarcascade_eye.xml'))
         self.eye_cascade = cv2.CascadeClassifier(os.path.join('classifiers', 'haarcascade_eye_tree_eyeglasses.xml'))
 
+        detector_params = cv2.SimpleBlobDetector_Params()
+        # Change thresholds
+        detector_params.minThreshold = 0;
+        detector_params.maxThreshold = 255;
+        # Filter by Area.
+        detector_params.filterByArea = True
+#        detector_params.minArea = 200
+#        detector_params.maxArea = 500
+        # Filter by Circularity
+        detector_params.filterByCircularity = True
+        detector_params.minCircularity = 0.5
+        detector_params.maxCircularity = 1.5
+        # Filter by Inertia
+        detector_params.filterByInertia = True
+        detector_params.minInertiaRatio = 0.5
+        detector_params.maxInertiaRatio = 1.5
+
+        # Blob detector
+        self.blob_detector = cv2.SimpleBlobDetector_create(detector_params)
+
         self.frame = None
         self.frame_gray = None
         self.left_eye_frame = None
@@ -48,6 +68,7 @@ class EyeTracker():
         self.left_purkinje = None
         self.right_purkinje = None
 
+        self.looking_direction = None
 
     def update(self, frame):
         self.frame = frame
@@ -73,6 +94,8 @@ class EyeTracker():
             if self.right_iris_detected:
                 self._extract_purkinje("right")
 
+        self._extract_looking_direction()
+
 
     def left_eye(self):
         if self.left_eye_detected:
@@ -83,6 +106,11 @@ class EyeTracker():
         if self.right_eye_detected:
             return Eye(self.right_eye_frame.copy(), "right", self.right_pupil, self.right_pupil_radius, self.right_iris_radius, self.right_purkinje)
         return None
+
+
+    def get_looking_direction(self):
+        return self.looking_direction
+
 
     def decorate_frame(self):
         frame = self.frame.copy()
@@ -101,9 +129,10 @@ class EyeTracker():
 #                x, y = self.left_pupil
 #                x += self.left_eye_bb[0]
 #                y += self.left_eye_bb[1]
-##                r = self.left_pupil_radius
-#                r = 2
-#                cv2.circle(frame, (x, y), r, (255, 0, 255), -1)
+#                r = self.left_pupil_radius
+##                r = 2
+#                cv2.circle(frame, (x, y), 2, (0, 0, 255), -1)
+#                cv2.circle(frame, (x, y), r, (0, 255, 0), 1)
 
             if self.left_iris and self.left_iris_radius:
                 # draw the left iris
@@ -133,9 +162,10 @@ class EyeTracker():
 #                x, y = self.right_pupil
 #                x += self.right_eye_bb[0]
 #                y += self.right_eye_bb[1]
-##                r = self.right_pupil_radius
-#                r = 2
-#                cv2.circle(frame, (x, y), r, (255, 0, 255), -1)
+#                r = self.right_pupil_radius
+##                r = 2
+#                cv2.circle(frame, (x, y), 2, (0, 0, 255), -1)
+#                cv2.circle(frame, (x, y), r, (0, 255, 0), 1)
 
             if self.right_iris and self.right_iris_radius:
                 # draw the right iris
@@ -198,7 +228,8 @@ class EyeTracker():
         face_frame_gray = self.frame_gray[y:y+h, x:x+w] 
         face_frame_gray = cv2.GaussianBlur(face_frame_gray, (7, 7), 0)
 
-        eyes = self.eye_cascade.detectMultiScale(face_frame_gray) 
+#        eyes = self.eye_cascade.detectMultiScale(face_frame_gray) 
+        eyes = self.eye_cascade.detectMultiScale(face_frame_gray, 1.3, 5) 
 
         for (ex, ey, ew, eh) in eyes:
             # do not consider false eyes detected at the bottom of the face
@@ -252,60 +283,25 @@ class EyeTracker():
 #            eye_frame_gray = cv2.cvtColor(self.right_eye_frame, cv2.COLOR_BGR2GRAY) 
             eye_frame_gray = self.frame_gray[self.right_eye_bb[1]:self.right_eye_bb[1]+self.right_eye_bb[3], self.right_eye_bb[0]:self.right_eye_bb[0]+self.right_eye_bb[2]]
 
-        eye_frame_gray = cv2.GaussianBlur(eye_frame_gray, (7, 7), 0)
+#        eye_frame_gray = cv2.GaussianBlur(eye_frame_gray, (7, 7), 0)
+        eye_frame_gray = cv2.medianBlur(eye_frame_gray, 7)
+        eye_frame_gray = cv2.equalizeHist(eye_frame_gray)
 
-        # Global thresholding
-        _, th_global = cv2.threshold(eye_frame_gray, 30, 255, cv2.THRESH_BINARY_INV)
+        eye_frame_gray = cv2.erode(eye_frame_gray, None, iterations=2)
+        eye_frame_gray = cv2.dilate(eye_frame_gray, None, iterations=4)
 
-        # Mean thresholding
-        th_mean = cv2.adaptiveThreshold(eye_frame_gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 17,2)
+        eye_frame_gray = cv2.medianBlur(eye_frame_gray, 7)
+        if position == "left":
+            cv2.imshow('pupil', eye_frame_gray)
 
+        keypoints = self.blob_detector.detect(eye_frame_gray)
 
-        # Gausian thresholding
-        th_gauss = cv2.adaptiveThreshold(eye_frame_gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 17,2)
+        if len(keypoints) > 0:
 
-        # Otsu's thresholding
-        _, th_otsu = cv2.threshold(eye_frame_gray, 0, 255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-
-
-        # plot all the images and their histograms
-        ths = [th_global,
-                th_mean,
-                th_gauss,
-                th_otsu
-                ]
-        titles = ['Global Thresholding', 
-                'Mean Thresholding',
-                'Gaussian Thresholding',
-                "Otsu's Thresholding"
-                ]
-#        if position == 'right':
-#            plt.subplot(3,3,1),plt.imshow(eye_frame_gray,'gray')
-#            plt.title("Original image"), plt.xticks([]), plt.yticks([])
-#            plt.subplot(3,3,2),plt.hist(eye_frame_gray.ravel(),256)
-#            plt.title("Histogram"), plt.xticks([]), plt.yticks([])
-#            for i in range(len(ths)):
-#                plt.subplot(3,3,i+3),plt.imshow(ths[i],'gray')
-#                plt.title(titles[i]), plt.xticks([]), plt.yticks([])
-#
-#            plt.draw()
-#            plt.pause(0.001)
-#            plt.clf()
+            pupil_center = (int(keypoints[0].pt[0]), int(keypoints[0].pt[1]))
+            pupil_radius = int(keypoints[0].size / 2)
 
 
-        threshold = th_global
-
-        contours, _ = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-#            contours, _ = cv2.findContours(threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
-        for cnt in contours:
-#            (x, y, w, h) = cv2.boundingRect(cnt)
-            m = cv2.moments(cnt)
-            if m['m00'] != 0:
-                pupil_center = (int(m['m10'] / m['m00']), int(m['m01'] / m['m00']))
-                break
-
-        pupil_radius = 5
         if position == "left":
             self.left_pupil = pupil_center
             self.left_pupil_radius = pupil_radius
@@ -313,6 +309,7 @@ class EyeTracker():
         if position == "right":
             self.right_pupil = pupil_center
             self.right_pupil_radius = pupil_radius
+            self.right_eye_frame = cv2.drawKeypoints(self.right_eye_frame, keypoints, self.right_eye_frame, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
 
     def _extract_iris(self, position):
@@ -332,12 +329,11 @@ class EyeTracker():
         if position == "right":
 #            eye_frame_gray = cv2.cvtColor(self.right_eye_frame, cv2.COLOR_BGR2GRAY) 
             eye_frame_gray = self.frame_gray[self.right_eye_bb[1]:self.right_eye_bb[1]+self.right_eye_bb[3], self.right_eye_bb[0]:self.right_eye_bb[0]+self.right_eye_bb[2]]
-        eye_frame_gray = cv2.GaussianBlur(eye_frame_gray, (7, 7), 0)
-#        eye_frame_gray = cv2.medianBlur(eye_frame_gray, 7)
+#        eye_frame_gray = cv2.GaussianBlur(eye_frame_gray, (7, 7), 0)
+        eye_frame_gray = cv2.medianBlur(eye_frame_gray, 7)
 
-#        cv2.imshow('non eq', eye_frame_gray)
-#        eye_frame_gray = cv2.equalizeHist(eye_frame_gray)
-#        cv2.imshow('eq', eye_frame_gray)
+        eye_frame_gray = cv2.equalizeHist(eye_frame_gray)
+        cv2.imshow('eq', eye_frame_gray)
 
         frame_height = np.size(eye_frame_gray, 0)
         frame_width = np.size(eye_frame_gray, 1)
@@ -349,6 +345,7 @@ class EyeTracker():
 #        circles = cv2.HoughCircles(edged, cv2.HOUGH_GRADIENT, 1, int(frame_width/2), param1=200, param2=1, minRadius=5, maxRadius=int(frame_width/3)) 
 
         circles = cv2.HoughCircles(edged, cv2.HOUGH_GRADIENT, 1, int(frame_width),param1=200, param2=1, minRadius=5, maxRadius=int(frame_width/4)) 
+#        circles = cv2.HoughCircles(eye_frame_gray, cv2.HOUGH_GRADIENT, 1, int(frame_width),param1=200, param2=1, minRadius=5, maxRadius=int(frame_width/4)) 
 
 #        print("Circles:", circles)
 
@@ -376,14 +373,14 @@ class EyeTracker():
             if iris_center != None and iris_radius != None:
                 self.left_iris_detected = True
             self.left_iris = iris_center
-            self.left_pupil = iris_center
+#            self.left_pupil = iris_center
             self.left_iris_radius = iris_radius
 
         if position == "right":
             if iris_center != None and iris_radius != None:
                 self.right_iris_detected = True
             self.right_iris = iris_center
-            self.right_pupil = iris_center
+#            self.right_pupil = iris_center
             self.right_iris_radius = iris_radius
 
 
@@ -551,3 +548,35 @@ class EyeTracker():
         if position == "right":
             self.right_purkinje = purkinje
 
+
+
+
+    def _extract_looking_direction(self):
+        direction = None
+        directionR = None
+        directionL = None
+
+        if self.left_eye_detected and self.left_pupil:
+            w = self.left_eye_frame.shape[1]
+            if self.left_pupil[0] < 0.5 * w:
+                directionL = "right"
+            if self.left_pupil[0] > 0.5 * w:
+                directionL = "left"
+            direction = directionL
+
+        if self.right_eye_detected and self.right_pupil:
+            w = self.right_eye_frame.shape[1]
+            if self.right_pupil[0] < 0.5 * w:
+                directionR = "right"
+            if self.right_pupil[0] > 0.5 * w:
+                directionR = "left"
+            direction = directionR
+
+        print(directionL, directionR)
+
+        if directionL == directionR:
+            direction = directionL
+#        else:
+#            direction = None
+
+        self.looking_direction = direction

@@ -33,34 +33,8 @@ class GazeTracker():
         self.right_eye = self.eye_tracker.right_eye()
         self._calculate_vector()
 
-    def get_direction(self):
-        direction = None
-        directionR = None
-        directionL= None
-        if self.left_eye and self.left_eye.pupil_center:
-            w = self.left_eye.frame.shape[1]
-            if self.left_eye.pupil_center[0] < 0.5 * w:
-                directionL = "right"
-            if self.left_eye.pupil_center[0] > 0.5 * w:
-                directionL = "left"
-            direction = directionL
-
-        if self.right_eye and self.right_eye.pupil_center:
-            w = self.right_eye.frame.shape[1]
-            if self.right_eye.pupil_center[0] < 0.5 * w:
-                directionR = "right"
-            if self.right_eye.pupil_center[0] > 0.5 * w:
-                directionR = "left"
-            direction = directionR
-
-        print(directionL, directionR)
-
-        if directionL == directionR:
-            direction = directionL
-        else:
-            direction = None
-
-        return direction
+    def get_looking_direction(self):
+        return self.eye_tracker.get_looking_direction()
 
     def _calculate_vector(self):
 

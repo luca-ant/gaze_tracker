@@ -1,5 +1,10 @@
 import numpy as np
 import cv2
+import pyautogui
+
+RES_SCREEN = pyautogui.size() # RES_SCREEN[0] -> width
+                              # RES_SCREEN[1] -> heigth
+
 
 class Screen:
     """
@@ -70,7 +75,7 @@ class Screen:
 
     def show(self):
         cv2.namedWindow("screen")
-#        cv2.moveWindow("screen", int(960 - self.width/2), 0)
+        cv2.moveWindow("screen", int(RES_SCREEN[0] / 2 - self.width/2), 0)
 
 #        cv2.namedWindow("screen", cv2.WND_PROP_FULLSCREEN)
 #        cv2.setWindowProperty("screen",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
