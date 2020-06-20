@@ -4,15 +4,11 @@ import collections
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480
 
 class Calibration:
-    """
-    Model class for calibration parameters
-    Attributes:
-        reg: a regression model
-    Methods:
-        update(data):
-    """
+    
     def __init__(self):
         self.reg = LinearRegression()
         self.x_reg = LinearRegression()
@@ -26,70 +22,58 @@ class Calibration:
 
         # pair-wise linear regression
 
-#        all_v = np.empty((0,2))
-#        all_p = np.empty((0,2))
-#        for point, vectors in data.items():
-#            v = np.array(vectors)
-#            mean = np.mean(v, axis=0)
-#            std = np.std(v, axis=0)
-##            print(mean)
-##            print(std)
-#            filtered_v = [ [v[0], v[1]] for v in vectors if v[0] > mean[0] - 1 * std[0] and v[1] > mean[1] - 1 * std[1] ]
-#            filtered_v = [ [v[0], v[1]] for v in filtered_v if v[0] < mean[0] + 1 * std[0] and v[1] < mean[1] + 1 * std[1] ]
-#            
-#            v = np.array(filtered_v)
-#            p = np.full(v.shape, [point])
-#
-#            all_v = np.concatenate((all_v, v))
-#            all_p = np.concatenate((all_p, p))
-##        print(all_v)
-##        print(all_p)
-#
-#        self.reg.fit(all_v, all_p)
-#        print("SCORE: {}".format(self.reg.score(all_v, all_p)))
-#        print("COEFF: {}".format(self.reg.coef_))
-
-
-
-        # linear regression
-        all_x_v = np.empty((0,1))
-        all_y_v = np.empty((0,1))
-        all_x_p = np.empty((0,1))
-        all_y_p = np.empty((0,1))
+        all_v = np.empty((0,2))
+        all_p = np.empty((0,2))
         for point, vectors in data.items():
-
             v = np.array(vectors)
             mean = np.mean(v, axis=0)
             std = np.std(v, axis=0)
-        #    print(mean)
-        #    print(std)
             filtered_v = [ [v[0], v[1]] for v in vectors if v[0] > mean[0] - 2 * std[0] and v[1] > mean[1] - 2 * std[1] ]
             filtered_v = [ [v[0], v[1]] for v in filtered_v if v[0] < mean[0] + 2 * std[0] and v[1] < mean[1] + 2 * std[1] ]
-        #    filtered_v = v
 
-            x_v = np.array([ [v[0]] for v in filtered_v ])
-            y_v = np.array([ [v[1]] for v in filtered_v ])
+            v = np.array(filtered_v)
+            p = np.full(v.shape, [point])
 
-            x_p = np.full(x_v.shape, [point[0]])
-            y_p = np.full(y_v.shape, [point[1]])
+            all_v = np.concatenate((all_v, v))
+            all_p = np.concatenate((all_p, p))
 
-            all_x_v = np.concatenate((all_x_v, x_v))   
-            all_y_v = np.concatenate((all_y_v, y_v))   
-            all_x_p = np.concatenate((all_x_p, x_p))   
-            all_y_p = np.concatenate((all_y_p, y_p))   
-#            plt.scatter(x_v, x_p)
-#            plt.show()
-#        print(all_x_v)
-#        print(all_y_v)
+        self.reg.fit(all_v, all_p)
+        print("SCORE: {}".format(self.reg.score(all_v, all_p)))
+        print("COEFF: {}".format(self.reg.coef_))
 
 
-        self.x_reg.fit(all_x_v, all_x_p)
-        self.y_reg.fit(all_y_v, all_y_p)
 
-        print("SCORE X: {}".format(self.x_reg.score(all_x_v, all_x_p)))
-        print("COEFF X: {}".format(self.x_reg.coef_))
-        print("SCORE Y: {}".format(self.y_reg.score(all_y_v, all_y_p)))
-        print("COEFF Y: {}".format(self.y_reg.coef_))
+#        # linear regression
+#        all_x_v = np.empty((0,1))
+#        all_y_v = np.empty((0,1))
+#        all_x_p = np.empty((0,1))
+#        all_y_p = np.empty((0,1))
+#        for point, vectors in data.items():
+#
+#            v = np.array(vectors)
+#            mean = np.mean(v, axis=0)
+#            std = np.std(v, axis=0)
+#            filtered_v = [ [v[0], v[1]] for v in vectors if v[0] > mean[0] - 2 * std[0] and v[1] > mean[1] - 2 * std[1] ]
+#            filtered_v = [ [v[0], v[1]] for v in filtered_v if v[0] < mean[0] + 2 * std[0] and v[1] < mean[1] + 2 * std[1] ]
+#
+#            x_v = np.array([ [v[0]] for v in filtered_v ])
+#            y_v = np.array([ [v[1]] for v in filtered_v ])
+#
+#            x_p = np.full(x_v.shape, [point[0]])
+#            y_p = np.full(y_v.shape, [point[1]])
+#
+#            all_x_v = np.concatenate((all_x_v, x_v))   
+#            all_y_v = np.concatenate((all_y_v, y_v))   
+#            all_x_p = np.concatenate((all_x_p, x_p))   
+#            all_y_p = np.concatenate((all_y_p, y_p))   
+#
+#        self.x_reg.fit(all_x_v, all_x_p)
+#        self.y_reg.fit(all_y_v, all_y_p)
+#
+#        print("SCORE X: {}".format(self.x_reg.score(all_x_v, all_x_p)))
+#        print("COEFF X: {}".format(self.x_reg.coef_))
+#        print("SCORE Y: {}".format(self.y_reg.score(all_y_v, all_y_p)))
+#        print("COEFF Y: {}".format(self.y_reg.coef_))
 
 
         # manual linear regression
@@ -108,16 +92,17 @@ class Calibration:
 
     def compute(self, vector):
         # pair-wise linear regression
-#        np_vector = np.array([vector])
-#        np_gaze = self.reg.predict(np_vector)
-#        output = (int(np_gaze[0][0]), int(np_gaze[0][1]))
+        np_vector = np.array([vector])
+        np_gaze = self.reg.predict(np_vector)
+        output = (int(np_gaze[0][0]), int(np_gaze[0][1]))
+
 
         # linear regression
-        x_vector = np.array([[vector[0]]])
-        x_out = self.x_reg.predict(x_vector)
-        y_vector = np.array([[vector[1]]])
-        y_out = self.y_reg.predict(y_vector)
-        output = (int(x_out[0][0]), int(y_out[0][0]))
+#        x_vector = np.array([[vector[0]]])
+#        x_out = self.x_reg.predict(x_vector)
+#        y_vector = np.array([[vector[1]]])
+#        y_out = self.y_reg.predict(y_vector)
+#        output = (int(x_out[0][0]), int(y_out[0][0]))
 
 
         # manual linear regression
@@ -128,7 +113,7 @@ class Calibration:
         return output
 
 def calibrate(camera, screen, gaze_tracker):
-    N_REQ_VECTORS = 25
+    N_REQ_VECTORS = 50
     N_SKIP_VECTORS = 25
 
     screen.clean()
@@ -161,8 +146,9 @@ def calibrate(camera, screen, gaze_tracker):
         print("TIME: {:.3f} ms".format(end*1000 - start*1000))
 
         cv2.namedWindow("frame")
-#        cv2.moveWindow("frame", 0,0)
         dec_frame = gaze_tracker.eye_tracker.decorate_frame()
+        dec_frame = cv2.resize(dec_frame,(int(FRAME_WIDTH / 2), int(FRAME_HEIGHT / 2)))
+        cv2.moveWindow("frame", 0 , 0)
         cv2.imshow('frame', dec_frame)
 
         vector = gaze_tracker.get_vector()
@@ -174,12 +160,10 @@ def calibrate(camera, screen, gaze_tracker):
 
 
         if vector:
-#            if len(vectors[point]) >= N_REQ_VECTORS:
-#                vectors[point].pop(0)
             vectors[point].append(vector)
             enough += 1
 
-        print(vectors)
+#        print(vectors)
 
         progress = len(vectors[point]) / N_REQ_VECTORS
         screen.draw(point, progress=progress)
@@ -204,15 +188,17 @@ def calibrate(camera, screen, gaze_tracker):
         k = cv2.waitKey(1) & 0xff
         if k == 1048603 or k == 27: # esc to terminate calibration
             screen.mode = "normal"
+            screen.clean()
+            screen.show()
             break
-        if k == ord('n'): # n to next calibration step
-#            screen.clean()
-            skip = 0
-            enough = 0
-            if len(calibration_points) == 0:
-                completed = True
-                break
-            point = calibration_points.pop(0)
+#        if k == ord('n'): # n to next calibration step
+##            screen.clean()
+#            skip = 0
+#            enough = 0
+#            if len(calibration_points) == 0:
+#                completed = True
+#                break
+#            point = calibration_points.pop(0)
 
     if completed:
         calibration.update(vectors)

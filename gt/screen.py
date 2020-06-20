@@ -5,7 +5,6 @@ import pyautogui
 RES_SCREEN = pyautogui.size() # RES_SCREEN[0] -> width
                               # RES_SCREEN[1] -> heigth
 
-
 class Screen:
     """
     Class for a fake screen
@@ -66,11 +65,27 @@ class Screen:
         if self.mode == "normal":
             instructions = "Press:\nESC to quit\nc to start calibration"
         if self.mode == "calibration":
-            instructions = "Press:\nESC to terminate\nn to next calibration step"
+#            instructions = "Press:\nESC to terminate\nn to next calibration step"
+            instructions = "Press:\nESC to terminate calibration"
 
         for i, line in enumerate(instructions.split('\n')):
             y = y0 + i*dy
             cv2.putText(img=self.screen, text=line, org=(x, y),fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8, color=(0,0,0), thickness=2)
+
+
+    def print_message(self, msg):
+
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fs = 2
+        th = 3
+
+        for i, line in enumerate(msg.split('\n')):
+            textsize = cv2.getTextSize(line, font, fs, th)[0]
+            x = (self.width - textsize[0]) // 2
+            y0, dy = (self.height + textsize[1]) // 2, textsize[1] + 30
+
+            y = y0 + i*dy
+            cv2.putText(img=self.screen, text=line, org=(x, y),fontFace=font, fontScale=fs, color=(0,0,0), thickness=th)
 
 
     def show(self):

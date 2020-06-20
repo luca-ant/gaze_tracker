@@ -57,7 +57,7 @@ class GazeTracker():
             vector = vector_right
         elif vector_left and vector_right:
             vector = ((vector_left[0] + vector_right[0]) // 2, (vector_left[1] + vector_right[1]) // 2)
-        #TODO CHECK
+
         self.vector = vector
 
     def get_vector(self):
@@ -67,10 +67,10 @@ class GazeTracker():
 
         gaze = None
         if self.vector:
-            try:
-                gaze = self.calibration.compute(self.vector)
-            except sklearn.exceptions.NotFittedError:
+#            try:
+            gaze = self.calibration.compute(self.vector)
+#            except sklearn.exceptions.NotFittedError:
 #            except:
-                print("CALIBRATION REQUIRED!")
+#                print("CALIBRATION REQUIRED!")
 
         return gaze 
