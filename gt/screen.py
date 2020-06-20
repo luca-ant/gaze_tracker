@@ -6,14 +6,7 @@ RES_SCREEN = pyautogui.size() # RES_SCREEN[0] -> width
                               # RES_SCREEN[1] -> heigth
 
 class Screen:
-    """
-    Class for a fake screen
-    Attributes:
-        width: screen width in pixels
-        height: screnn height in pixels
-        pointer: coordinates (x, y) of pointer position in pixels
-    Methods:
-    """
+
     def __init__(self, width=1280, height=720):
         self.width = width
         self.height = height

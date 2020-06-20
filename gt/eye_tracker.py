@@ -13,27 +13,6 @@ class EyeTracker():
 #        self.eye_cascade = cv2.CascadeClassifier(os.path.join('classifiers', 'haarcascade_eye.xml'))
         self.eye_cascade = cv2.CascadeClassifier(os.path.join('classifiers', 'haarcascade_eye_tree_eyeglasses.xml'))
 
-        # FOR BLOB DETECION VERSION
-#        detector_params = cv2.SimpleBlobDetector_Params()
-#        # Change thresholds
-#        detector_params.minThreshold = 0;
-#        detector_params.maxThreshold = 255;
-#        # Filter by Area.
-#        detector_params.filterByArea = True
-#        detector_params.minArea = 200
-#        detector_params.maxArea = 500
-#        # Filter by Circularity
-#        detector_params.filterByCircularity = True
-#        detector_params.minCircularity = 0.5
-#        detector_params.maxCircularity = 1.5
-#        # Filter by Inertia
-#        detector_params.filterByInertia = True
-#        detector_params.minInertiaRatio = 0.5
-#        detector_params.maxInertiaRatio = 1.5
-#
-#        # Blob detector
-#        self.blob_detector = cv2.SimpleBlobDetector_create(detector_params)
-
         self.frame = None
         self.frame_gray = None
         self.left_eye_frame = None
@@ -320,12 +299,6 @@ class EyeTracker():
                 pupil_center = (int(m['m10'] / m['m00']), int(m['m01'] / m['m00']))
 
 
-#        keypoints = self.blob_detector.detect(eye_frame_th)
-#        if len(keypoints) > 0:
-#            pupil_center = (int(keypoints[0].pt[0]), int(keypoints[0].pt[1]))
-#            pupil_radius = int(keypoints[0].size / 2)
-
-
         if position == "left":
             if pupil_center != None and pupil_radius != None:
                 self.left_pupil_detected = True
@@ -367,9 +340,6 @@ class EyeTracker():
 
         frame_height = np.size(eye_frame_gray, 0)
         frame_width = np.size(eye_frame_gray, 1)
-
-#        if position == "right":
-#            cv2.imshow('pupil', eye_frame_gray)
 
         edged = cv2.Canny(eye_frame_gray, 100, 200) 
 
@@ -481,59 +451,6 @@ class EyeTracker():
 ##        if position == "left":
 ##            cv2.imwrite("images/purkinje_detection_02_iter_threshold.png", th_global)
 
-
-#        # Canny
-#        edged = cv2.Canny(iris_frame_gray, 100, 200) 
-#
-#
-#        num_labels, labels_image = cv2.connectedComponents(edged, connectivity=8)
-#        frame_height = np.size(eye_frame_gray, 0)
-#        frame_width = np.size(eye_frame_gray, 1)
-#        distance = 100
-#        for l in range(1,num_labels+1):
-#            image = np.copy(edged)
-#            image[labels_image == l] = 255
-#            image[labels_image != l] = 0
-#
-#            contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-##            contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-#            contours = sorted(contours, key=lambda x: cv2.contourArea(x))
-#            
-#            for cnt in contours:
-#
-#                cnt = cv2.convexHull(cnt)
-#                area = cv2.contourArea(cnt)
-#
-#                if area == 0 or area > 500:
-#                    continue
-#
-#
-#                circumference = cv2.arcLength(cnt, True)
-#                circularity = circumference ** 2 / (4*math.pi*area)
-#
-##                print("circularity image {} = {}".format(l,circularity))
-#
-#                if circularity < 0.3 and circularity > 1.7:
-#                    continue
-#
-#                if abs(circularity - 1) < distance:
-#                    purkinje = None
-##                    print("dist", abs(circularity -1))
-#                    distance = abs(circularity - 1)
-#                    m = cv2.moments(cnt)
-#                    if m['m00'] != 0:
-#                        purkinje = (x + int(m['m10'] / m['m00']), y + int(m['m01'] / m['m00']))
-#
-##                    if position == "right":
-##                        x_b,y_b,w,h = cv2.boundingRect(cnt)
-##                        cv2.rectangle(self.right_eye_frame,(x+x_b,y+x_b),(x+x_b+w,y_b+y+h),(0,255,0),1)
-#
-#
-#        if position == "right":
-#            cv2.imshow('rect',self.right_eye_frame)
-#
-#
-##            cv2.imshow('image'+str(l), image)
 
         if position == "left":
             self.left_purkinje = purkinje

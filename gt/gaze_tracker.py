@@ -10,11 +10,7 @@ from model import Eye
 from calibration import Calibration
 
 class GazeTracker():
-    """
-    GazeTracker implementation based on purkinje image
-    Attributes:
-        calibration: calibration parameters
-    """
+
     def __init__(self):
         super().__init__()
 
@@ -25,22 +21,15 @@ class GazeTracker():
         self.right_eye = None
 
     def update(self, frame):
-        """
-        Given an image, update the tuple (x, y) with the coordinates of the vector between pupil center and purkinje image
-        """
+
         self.eye_tracker.update(frame)
         self.left_eye = self.eye_tracker.left_eye()
         self.right_eye = self.eye_tracker.right_eye()
         self._calculate_vector()
 
-    def get_looking_direction(self):
-        return self.eye_tracker.get_looking_direction()
 
     def _calculate_vector(self):
 
-        """
-        Calulate the vector coordinates from eyes features
-        """
         vector = None
         vector_left = None
         vector_right = None
