@@ -1,5 +1,12 @@
 # Gaze tracker
 
+This project is an experiment on gaze tracker system, based on the position of glint on the iris (See [Purkinje images]() and [Eye tracking](https://en.wikipedia.org/wiki/Eye_tracking#Technologies_and_techniques) for details). This glint is the reflection of a source of light near the camera so some particular hardware is needed.
+
+
+## Requirements
+An high resolution image of the eye is required and a source of light near the camera too, so to get that with simple hardware I use a smartphone as a remote camera (achieved by [IP Webcam](https://play.google.com/store/apps/details?id=com.pas.webcam) app) fixed on a stable support, turn on the flash LED and put it in front on one eye, close to it. 
+
+## Demonstration
 ### Calibration phase
 <p align="center">
   <img width=1024px src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/gaze_tracker_calibration.gif">
@@ -10,9 +17,6 @@
   <img width=1024px src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/gaze_tracker_mouse.gif">
 </p>
 
-## Requirements
-
-(IP Webcam)[https://play.google.com/store/apps/details?id=com.pas.webcam] and change the IP for remote source in `main.py` file.
 
 ## Getting started
 
