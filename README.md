@@ -1,7 +1,6 @@
 # Gaze tracker
 
-This project is an experiment on gaze tracker system, based on the position of glint on the iris (See [Purkinje images](https://en.wikipedia.org/wiki/Purkinje_images) and [Eye tracking](https://en.wikipedia.org/wiki/Eye_tracking#Technologies_and_techniques) for details) and by tracking the glint it is possible to estimate the gaze position on the screen. This glint is the reflection of a source of light near the camera, so I need some particular hardware.
-
+This project is an experiment on gaze tracker system, based on the position of glint on the iris, which is the reflection of a source of light near the camera (See [Purkinje images](https://en.wikipedia.org/wiki/Purkinje_images) and [Eye tracking](https://en.wikipedia.org/wiki/Eye_tracking#Technologies_and_techniques) for details). By tracking the glint it is possible to estimate the gaze position on the screen and use this position as an input system (in this example only to move the mouse arrow). 
 
 ## Hardware requirements
 
