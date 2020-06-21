@@ -1,9 +1,9 @@
 # Gaze tracker
 
-This project is an experiment on gaze tracker system, based on the position of glint on the iris (See [Purkinje images]() and [Eye tracking](https://en.wikipedia.org/wiki/Eye_tracking#Technologies_and_techniques) for details). This glint is the reflection of a source of light near the camera so some particular hardware is needed.
+This project is an experiment on gaze tracker system, based on the position of glint on the iris (See [Purkinje images]() and [Eye tracking](https://en.wikipedia.org/wiki/Eye_tracking#Technologies_and_techniques) for details). This glint is the reflection of a source of light near the camera, so some particular hardware is needed.
 
 
-## Requirements
+## Hardware requirements
 
 <img width=256px align="right" src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/cam.jpg">
 
