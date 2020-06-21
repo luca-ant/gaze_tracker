@@ -5,11 +5,9 @@ This project is an experiment on gaze tracker system, based on the position of g
 
 ## Requirements
 
+<img width=256px align="right" src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/cam.jpg">
 
 An high resolution image of the eye is required and a source of light near the camera too, so to get that with simple hardware I use a smartphone as a remote camera (achieved by [IP Webcam](https://play.google.com/store/apps/details?id=com.pas.webcam) app) fixed on a stable support, turn on the flash LED and put it in front on one eye, close to it. 
-
-
-<img width=256px align="right" src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/cam.jpg">
 
 
 <div style="float: none">
