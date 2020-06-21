@@ -3,6 +3,7 @@
 
 <br />
 <br />
+
 ### Calibration phase
 <p align="center">
   <img width=1024px src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/gaze_tracker_calibration.gif">
