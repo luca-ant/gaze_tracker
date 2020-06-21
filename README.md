@@ -1,9 +1,5 @@
 # Gaze tracker
 
-
-<br />
-<br />
-
 ### Calibration phase
 <p align="center">
   <img width=1024px src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/gaze_tracker_calibration.gif">
@@ -13,6 +9,10 @@
 <p align="center">
   <img width=1024px src="https://github.com/luca-ant/gaze_tracker/blob/master/videos/gaze_tracker_mouse.gif">
 </p>
+
+## Requirements
+
+(IP Webcam)[https://play.google.com/store/apps/details?id=com.pas.webcam] and change the IP for remote source in `main.py` file.
 
 ## Getting started
 
