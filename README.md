@@ -10,7 +10,7 @@ For this kind of system, an high resolution image of the eye is required and a s
 
 <br />
 
-## Demonstration
+## Demo
 
 ### Calibration phase
 <p align="center">
