@@ -277,7 +277,6 @@ class EyeTracker():
 ##            cv2.imwrite("images/pupil_detection_04_medianBlur.png", eye_frame_th)
 
         contours, _ = cv2.findContours(eye_frame_th, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
         contours = sorted(contours, key=lambda x: cv2.contourArea(x))
 
         for cnt in contours:
