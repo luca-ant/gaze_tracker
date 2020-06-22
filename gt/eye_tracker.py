@@ -278,6 +278,7 @@ class EyeTracker():
 
         contours, _ = cv2.findContours(eye_frame_th, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
+        contours = sorted(contours, key=lambda x: cv2.contourArea(x))
 
         for cnt in contours:
 
@@ -297,6 +298,7 @@ class EyeTracker():
             m = cv2.moments(cnt)
             if m['m00'] != 0:
                 pupil_center = (int(m['m10'] / m['m00']), int(m['m01'] / m['m00']))
+                break
 
 
         if position == "left":
