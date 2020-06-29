@@ -2,6 +2,7 @@ import os
 import cv2
 import math
 import numpy as np
+#import matplotlib.pyplot as plt
 from model import Eye
 
 class EyeTracker():
@@ -310,6 +311,7 @@ class EyeTracker():
                 self.right_pupil_detected = True
             self.right_pupil = pupil_center
             self.right_pupil_radius = pupil_radius
+#            self.right_eye_frame = cv2.drawKeypoints(self.right_eye_frame, keypoints, self.right_eye_frame, (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
 
     def _extract_iris(self, position):
