@@ -263,11 +263,11 @@ class EyeTracker():
 
         _, eye_frame_th = cv2.threshold(eye_frame_gray, threshold, 255, cv2.THRESH_BINARY)
 
-        eye_frame_th = cv2.erode(eye_frame_th, None, iterations=2)
-        eye_frame_th = cv2.dilate(eye_frame_th, None, iterations=4)
-
 ##        if position == "left":
 ##            cv2.imwrite("images/pupil_detection_02_threshold.png", eye_frame_th)
+
+        eye_frame_th = cv2.erode(eye_frame_th, None, iterations=2)
+        eye_frame_th = cv2.dilate(eye_frame_th, None, iterations=4)
 
         eye_frame_th = cv2.medianBlur(eye_frame_th, 7)
 
