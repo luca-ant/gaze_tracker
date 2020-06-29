@@ -98,7 +98,7 @@ class EyeTracker():
 #                cv2.circle(frame, (x, y), r, (0, 255, 0), 1)
 
 ##                eye_frame = frame[self.left_eye_bb[1]:self.left_eye_bb[1]+self.left_eye_bb[3], self.left_eye_bb[0]:self.left_eye_bb[0]+self.left_eye_bb[2]]
-##                cv2.imwrite("images/pupil_detection_05_eye_frame.png", eye_frame)
+##                cv2.imwrite("images/pupil_detection_04_eye_frame.png", eye_frame)
 
 
             if self.left_iris and self.left_iris_radius:
@@ -257,24 +257,22 @@ class EyeTracker():
 ##        if position == "left":
 ##            cv2.imwrite("images/pupil_detection_01_equalized_hist.png", eye_frame_gray)
 
-        eye_frame_gray = cv2.erode(eye_frame_gray, None, iterations=2)
-        eye_frame_gray = cv2.dilate(eye_frame_gray, None, iterations=4)
-
-##        if position == "left":
-##            cv2.imwrite("images/pupil_detection_02_er-dil.png", eye_frame_gray)
 
 #        threshold = 2
         threshold = cv2.getTrackbarPos('threshold', 'frame')
 
         _, eye_frame_th = cv2.threshold(eye_frame_gray, threshold, 255, cv2.THRESH_BINARY)
 
+        eye_frame_th = cv2.erode(eye_frame_th, None, iterations=2)
+        eye_frame_th = cv2.dilate(eye_frame_th, None, iterations=4)
+
 ##        if position == "left":
-##            cv2.imwrite("images/pupil_detection_03_threshold.png", eye_frame_th)
+##            cv2.imwrite("images/pupil_detection_02_threshold.png", eye_frame_th)
 
         eye_frame_th = cv2.medianBlur(eye_frame_th, 7)
 
 ##        if position == "left":
-##            cv2.imwrite("images/pupil_detection_04_medianBlur.png", eye_frame_th)
+##            cv2.imwrite("images/pupil_detection_03_medianBlur.png", eye_frame_th)
 
         contours, _ = cv2.findContours(eye_frame_th, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = sorted(contours, key=lambda x: cv2.contourArea(x))
@@ -283,6 +281,8 @@ class EyeTracker():
 
             cnt = cv2.convexHull(cnt)
             area = cv2.contourArea(cnt)
+            if area == 0:
+                continue
             circumference = cv2.arcLength(cnt, True)
             circularity = circumference ** 2 / (4*math.pi*area)
 
