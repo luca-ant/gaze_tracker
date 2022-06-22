@@ -1,6 +1,6 @@
 joblib==0.15.1
 MouseInfo==0.1.3
-numpy==1.18.5
+numpy==1.22.0
 opencv-python==4.2.0.34
 Pillow==8.1.1
 PyAutoGUI==0.9.50
