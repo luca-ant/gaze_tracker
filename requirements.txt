@@ -12,6 +12,6 @@ PyScreeze==0.1.26
 python3-xlib==0.15
 PyTweening==1.0.3
 scikit-learn==0.23.1
-scipy==1.4.1
+scipy==1.10.0
 sklearn==0.0
 threadpoolctl==2.1.0
